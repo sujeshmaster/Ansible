@@ -34,6 +34,7 @@
         name: jenkins
         state: started
         enabled: yes
+        
     - name: Print Jenkins admin password
       command: "cat /var/lib/jenkins/secrets/initialAdminPassword"
       register: admin_password
