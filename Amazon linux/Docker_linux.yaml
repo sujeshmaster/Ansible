@@ -1,0 +1,21 @@
+- hosts: web
+  remote_user: ansible
+  become: yes
+  tasks: 
+    - name: update packages
+      yum:
+        name: '*'
+        state: latest
+    - name: Install required packages
+      yum:
+        name: amazon-linux-extras
+        state: present
+    - name: Install Docker
+      yum:
+        name: docker
+        state: latest
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true

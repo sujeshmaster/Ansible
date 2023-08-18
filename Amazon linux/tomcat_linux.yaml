@@ -1,0 +1,41 @@
+- hosts: app
+  remote_user: ansible
+  become: yes
+  tasks:
+    - name: download java
+      yum:
+        name: java
+        state: latest
+
+    - name: download the tomcat package file from tomcat website
+      get_url:
+        url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.78/bin/apache-tomcat-9.0.78.tar.gz
+        dest: /opt/
+        mode: '0440'
+
+    - name: Unzip a file
+      unarchive:
+        src: /opt/apache-tomcat-9.0.78.tar.gz
+        dest: /opt/
+        remote_src: yes
+    
+# scp ec2-user@<IP> /opt/apache-tomcat-9.0.78:/opt/conf/server.xml . --> to download the file from WN to CN
+# vi server.xml -- to change the port number
+# mv server.xml server.xml.j2
+    - name: port number change
+      template:
+        src: ./server.xml.j2
+        dest: /opt/apache-tomcat-9.0.78/conf/server.xml
+        mode: '0644'
+
+    - name: copy file src to des with permissions
+      copy: 
+        src: ./Calendar.war
+        dest: /opt/apache-tomcat-9.0.78/webapps/app.war
+        mode: '0777'
+
+    - name: service tomcat shutdown
+      shell: nohup /opt/apache-tomcat-9.0.78/bin/shutdown.sh &
+
+    - name: service tomcat start
+      shell: nohup /opt/apache-tomcat-9.0.78/bin/startup.sh &

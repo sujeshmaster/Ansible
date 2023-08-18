@@ -1,0 +1,28 @@
+- name: Install Jenkins on Amazon Linux
+  hosts: web
+  remote_user: ec2-user
+  become: yes
+  tasks:
+    - name: Install Java
+      yum:
+        name: java
+        state: present
+
+    - name: Add Jenkins repository
+      yum_repository:
+        name: jenkins
+        description: Jenkins Repository
+        baseurl: http://pkg.jenkins-ci.org/redhat
+        gpgkey: https://pkg.jenkins.io/redhat/jenkins.io.key
+        state: present
+
+    - name: Install Jenkins
+      yum:
+        name: jenkins
+        state: present
+
+    - name: Start Jenkins service and enable it on boot
+      service:
+        name: jenkins
+        state: started
+        enabled: yes
